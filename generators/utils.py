@@ -105,6 +105,12 @@ def render_video(
     output_imgs = torch.cat(output_imgs, 0)
     transformed_imgs = ((output_imgs + 1) / 2 * 255).to(torch.uint8).permute(0, 2, 3, 1)
 
+    transformed_imgs = torch.stack([
+    torch.from_numpy(
+        cv2.resize(frame.numpy(), (1024, 1024), interpolation=cv2.INTER_CUBIC)
+    ) for frame in transformed_imgs.cpu()
+    ])
+
     if silent:
         torchvision.io.write_video(output_path, transformed_imgs.cpu(), fps)
     else:
